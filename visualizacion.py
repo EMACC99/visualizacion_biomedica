@@ -14,16 +14,16 @@ st.sidebar.title('Visualizacion de datos sobre IA en investigacion biomedica en 
 
 dataset = st.sidebar.selectbox('Dataset', ['BioMedica', 'Procesamiento Natural de Lenguaje'])
 
-filename = 'bio_mex_papers_2.csv'
+filename = 'Datasets/bio_mex_papers_2.csv'
 
 if dataset == 'BioMedica':
-    filename = 'bio_mex_papers_2.csv'
+    filename = 'Datasets/bio_mex_papers_2.csv'
 elif dataset == 'Procesamiento Natural de Lenguaje':
-    filename =  'dataset_del_fer.csv'
+    filename =  'Datasets/dataset_del_fer.csv'
 
 
 dataset = load_dataset(filename)
-institutos = load_dataset('institutos.csv')
+institutos = load_dataset('Datasets/institutos.csv')
 
 st.sidebar.markdown('Paper random por cantidad de mujeres')
 cant_mujeres = st.sidebar.slider('Cantidad de Mujeres', min_value=1, max_value=4)
