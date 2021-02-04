@@ -43,8 +43,8 @@ for anio in anios:
 fig = px.scatter(x = anios, y = cantidad_mujeres_anio)
 st.plotly_chart(fig)
 
-num_institutos = st.sidebar.slider('Top de institutos', min_value = 5, max_value = 30)
+num_institutos = st.sidebar.slider('Top de institutos', min_value = 5, max_value = len(institutos))
 institutos.sort_values('Count', ascending=False, inplace=True)
 st.markdown(f'## Top {num_institutos} de institutos publicados')
-fig = px.bar(institutos[:num_institutos], x = 'Insitutos', y = 'Count')
+fig = px.bar(institutos[:num_institutos], x = 'Instituto', y = 'Count')
 st.plotly_chart(fig)
