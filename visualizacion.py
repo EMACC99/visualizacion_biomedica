@@ -18,9 +18,10 @@ filename = 'Datasets/bio_mex_papers_2.csv'
 
 if dataset == 'BioMedica':
     filename = 'Datasets/bio_mex_papers_2.csv'
+    columna = 'pacientes mexicanos'
 elif dataset == 'Procesamiento Natural de Lenguaje':
     filename =  'Datasets/dataset_del_fer.csv'
-
+    columna = 'columna del fer'
 
 dataset = load_dataset(filename)
 institutos = load_dataset('Datasets/institutos.csv')
@@ -47,4 +48,39 @@ num_institutos = st.sidebar.slider('Top de institutos', min_value = 5, max_value
 institutos.sort_values('Count', ascending=False, inplace=True)
 st.markdown(f'## Top {num_institutos} de institutos por publicacion registrada')
 fig = px.bar(institutos[:num_institutos], x = 'Instituto', y = 'Count')
+st.plotly_chart(fig)
+
+st.markdown('# Datasets')
+
+st.markdown('## Porcetage de Datasets Registrados con pacientes de personas Mexicanas y no Mexicanas')
+pacientes = dataset[columna].iloc[:-1]
+pacientes_count = {}
+for paciente in pacientes.values:
+    paciente = paciente.split(';')
+    for item in paciente:
+        item = item.lower()
+        if item in pacientes_count:
+            pacientes_count[item] += 1
+        else:
+            pacientes_count[item] = 1
+
+pacientes_df = pd.DataFrame(pacientes_count.items(), columns=['value', 'count'])
+fig = px.pie(pacientes_df, names = 'value', values = 'count')
+st.plotly_chart(fig)
+
+
+st.markdown('## Datos Reales o ficticios')
+reales_ficticios = dataset['reales/ficticios'].iloc[:-1]
+reales_ficticios_count = {}
+for dato in reales_ficticios.values:
+    dato = dato.split(';')
+    for item in dato:
+        item = item.lower()
+        if item in reales_ficticios_count:
+            reales_ficticios_count[item] += 1
+        else:
+            reales_ficticios_count[item] = 1
+
+reales_ficticios_df = pd.DataFrame(reales_ficticios_count.items(), columns=['value', 'count'])
+fig = px.pie(reales_ficticios_df, names = 'value', values = 'count')
 st.plotly_chart(fig)
