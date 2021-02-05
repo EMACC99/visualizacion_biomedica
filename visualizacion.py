@@ -45,6 +45,6 @@ st.plotly_chart(fig)
 
 num_institutos = st.sidebar.slider('Top de institutos', min_value = 5, max_value = len(institutos))
 institutos.sort_values('Count', ascending=False, inplace=True)
-st.markdown(f'## Top {num_institutos} de institutos publicados')
+st.markdown(f'## Top {num_institutos} de institutos por publicacion registrada')
 fig = px.bar(institutos[:num_institutos], x = 'Instituto', y = 'Count')
 st.plotly_chart(fig)
