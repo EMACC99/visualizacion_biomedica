@@ -51,6 +51,18 @@ positions = pd.DataFrame(positions.items(), columns=['position', 'count'])
 fig = px.bar(positions.sort_values('position'), x = 'position', y = 'count')
 st.plotly_chart(fig)
 
+proporcion_autores = []
+autores_count = 0
+autores = dataset.Autores.values
+for autore in autores:
+    autore = autore.split(';')
+    autore_size = len(autore)
+    proporcion_autores.append(autore_size)
+    autores_count += autore_size
+proporcion_autores = dataset['cantidad de mujeres'].values/proporcion_autores
+
+st.markdown(f'## De los papers registrados, en promedio la relacion autor:autora es de {proporcion_autores.mean()}')
+
 st.markdown('## Mujeres por año')
 anios = sorted(dataset['Año'].unique())
 cantidad_mujeres_anio = []
