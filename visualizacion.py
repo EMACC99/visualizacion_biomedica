@@ -8,23 +8,23 @@ def load_dataset(filename : str, **kargs):
     data = pd.read_csv(filename, **kargs)
     return data
 
-st.title('Visualizacion de datos sobre IA en investigacion biomedica en Mexico')
-st.sidebar.title('Visualizacion de datos sobre IA en investigacion biomedica en Mexico')
+st.title('Visualización de datos sobre IA en investigación biomédica en México')
+st.sidebar.title('Visualización de datos sobre IA en investigación biomédica en México')
 
 
-dataset = st.sidebar.selectbox('Dataset', ['BioMedica', 'Procesamiento Natural de Lenguaje'])
+dataset = st.sidebar.selectbox('Dataset', ['BioMedica', 'Procesamiento Natural de Lenguaje'], key = '0')
 
-filename = 'Datasets/bio_mex_papers_2.csv'
+filename = 'Datasets/biomed_1.csv'
 
 if dataset == 'BioMedica':
-    filename = 'Datasets/bio_mex_papers_2.csv'
+    filename = 'Datasets/biomed_1.csv'
     columna = 'pacientes mexicanos'
 elif dataset == 'Procesamiento Natural de Lenguaje':
     filename =  'Datasets/dataset_del_fer.csv'
     columna = 'columna del fer'
 
 dataset = load_dataset(filename)
-institutos = load_dataset('Datasets/institutos.csv')
+institutos = load_dataset('Datasets/institutos_rev_1.csv')
 
 st.sidebar.markdown('Paper random por cantidad de mujeres')
 cant_mujeres = st.sidebar.slider('Cantidad de Mujeres', min_value=1, max_value=4)
@@ -34,6 +34,21 @@ st.markdown('## Conteo de mujeres por paper')
 mujeres_count = dataset['cantidad de mujeres'].value_counts()
 cant_mujeres = pd.DataFrame({'cant' : mujeres_count.index, 'value': mujeres_count.values})
 fig = px.bar(cant_mujeres, x = 'cant', y = 'value', height = 500)
+st.plotly_chart(fig)
+
+st.markdown('## Posiciones de las autoras en los papers')
+mujeres = dataset['¿Mujeres?'].values
+positions = {}
+for position in mujeres:
+    position = position.split(';')
+    for key in position:
+        if key != '0':
+            if key in positions:
+                positions[key] += 1
+            else:
+                positions[key] = 1
+positions = pd.DataFrame(positions.items(), columns=['position', 'count'])
+fig = px.bar(positions.sort_values('position'), x = 'position', y = 'count')
 st.plotly_chart(fig)
 
 st.markdown('## Mujeres por año')
@@ -46,9 +61,16 @@ st.plotly_chart(fig)
 
 num_institutos = st.sidebar.slider('Top de institutos', min_value = 5, max_value = len(institutos))
 institutos.sort_values('Count', ascending=False, inplace=True)
-st.markdown(f'## Top {num_institutos} de institutos por publicacion registrada')
+st.markdown(f'## Top {num_institutos} de institutos por publicación registrada')
 fig = px.bar(institutos[:num_institutos], x = 'Instituto', y = 'Count')
 st.plotly_chart(fig)
+
+st.markdown('## Papers por Año')
+papers_por_anio = dataset['Año'].value_counts()
+papers_por_anio = pd.DataFrame({'Año': papers_por_anio.index, 'value': papers_por_anio.values})
+fig =  px.bar(papers_por_anio, x = 'Año', y = 'value')
+st.plotly_chart(fig)
+
 
 st.markdown('# Datasets')
 
@@ -83,4 +105,30 @@ for dato in reales_ficticios.values:
 
 reales_ficticios_df = pd.DataFrame(reales_ficticios_count.items(), columns=['value', 'count'])
 fig = px.pie(reales_ficticios_df, names = 'value', values = 'count')
+st.plotly_chart(fig)
+
+st.markdown('## Creados o de otro lado')
+de_donde = dataset['de donde'].values[:-1]
+count_datasets = {}
+for datasets in de_donde:
+    datasets = datasets.split(';')
+    for dataset in datasets:
+        dataset = dataset.rstrip().lstrip()
+        if dataset in count_datasets:
+            count_datasets[dataset] += 1
+        else:
+            count_datasets[dataset] = 1
+
+creados, otros = 0,0
+for item in count_datasets:
+    if item == 'creado':
+        creados += count_datasets[item]
+    else:
+        otros += count_datasets[item]
+
+creados_o_relaes = {'creado' : creados, 'reales': otros}
+
+creados_o_relaes = pd.DataFrame(creados_o_relaes.items(), columns=['tipo', 'count'])
+
+fig = px.pie(creados_o_relaes, names = 'tipo', values = 'count')
 st.plotly_chart(fig)
